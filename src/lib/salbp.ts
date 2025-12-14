@@ -330,7 +330,6 @@ export async function* solveSA(
     let currentSeq = getInitialSolution(tasks);
     let currentSol = evaluateSequence(tasks, currentSeq, problemType, constraint);
 
-    let bestSeq = [...currentSeq];
     let bestSol = currentSol;
 
     let temp = params.initialTemp;
@@ -372,7 +371,7 @@ export async function* solveSA(
 
         if (!isValid) {
             // Step without move
-            temp *= (1 - params.coolingRate);
+            temp *= params.coolingRate;
             if (i % 10 === 0) { // Throttle updates
                 yield {
                     iteration: i, cost: currentSol.cost, bestCost: bestSol.cost, solution: bestSol,
@@ -397,7 +396,6 @@ export async function* solveSA(
 
             if (currentSol.cost < bestSol.cost) {
                 bestSol = currentSol;
-                bestSeq = [...currentSeq];
             }
         } else {
             p = Math.exp(-delta / temp);
@@ -408,7 +406,7 @@ export async function* solveSA(
             }
         }
 
-        temp *= (1 - params.coolingRate);
+        temp *= params.coolingRate;
 
         // Always yield detailed steps for smooth visualization if speed > 0
         // Or throttle slightly if very fast.

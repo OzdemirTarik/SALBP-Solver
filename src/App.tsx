@@ -42,16 +42,18 @@ function App() {
         speedRef.current = speed;
     }, [speed]);
 
-    // Parse initial on load
+    // Parse on input change (real-time graph updates)
     useEffect(() => {
         try {
             const parsed = parseInput(jsonInput);
             setTasks(parsed);
-            setError(null);
+            // Don't clear error here, let user type; if it's valid, we show it. 
+            // Only clear globally if we want to confirm validity.
+            // But let's keep it simple: if valid, update graph.
         } catch (e) {
-            // quiet fail on init
+            // quiet fail on intermediate edits
         }
-    }, []);
+    }, [jsonInput]);
 
     const handleSolve = async (type: ProblemType, constraint: number, params: AlgorithmParams) => {
         try {
