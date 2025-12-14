@@ -13,6 +13,8 @@ interface SidebarProps {
     onSolve: (type: ProblemType, constraint: number, params: AlgorithmParams) => void;
     isSolving: boolean;
     onReset: () => void;
+    simulationSpeed: number;
+    setSimulationSpeed: (val: number) => void;
 }
 
 const DEFAULT_PARAMS: AlgorithmParams = {
@@ -26,7 +28,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
     setJsonInput,
     onSolve,
     isSolving,
-    onReset
+    onReset,
+    simulationSpeed,
+    setSimulationSpeed
 }) => {
     const [problemType, setProblemType] = useState<ProblemType>('SALBP-1');
     const [constraint, setConstraint] = useState<string>(''); // C or N
@@ -152,6 +156,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                 onChange={(e) => setParams({ ...params, maxIterations: parseInt(e.target.value) })}
                             />
                         </div>
+
+                        {/* Speed Control (New) */}
+                        <div className="space-y-1 pt-2 border-t border-slate-800">
+                            <div className="flex justify-between items-center">
+                                <Label className="text-xs text-indigo-400 font-semibold">Simulation Speed</Label>
+                                <span className="text-[10px] font-mono text-slate-400">{simulationSpeed}ms</span>
+                            </div>
+                            <input
+                                type="range"
+                                min="0" max="500" step="10"
+                                value={simulationSpeed}
+                                onChange={(e) => setSimulationSpeed && setSimulationSpeed(Number(e.target.value))}
+                                className="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                            />
+                        </div>
                     </CardContent>
                 </Card>
             </div>
@@ -174,6 +193,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     <RotateCcw className="w-4 h-4 mr-2" /> Reset
                 </Button>
             </div>
-        </div>
+        </div >
     );
 };

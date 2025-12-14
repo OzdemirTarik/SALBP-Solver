@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Sidebar } from './components/Sidebar'
 import { PrecedenceGraph } from './components/PrecedenceGraph'
 import { SolutionView } from './components/SolutionView'
@@ -35,6 +35,12 @@ function App() {
 
     const [currentConfig, setCurrentConfig] = useState<{ type: ProblemType, constraint: number } | null>(null);
     const [speed, setSpeed] = useState<number>(50); // ms delay
+    const speedRef = useRef(speed);
+
+    // Sync ref
+    useEffect(() => {
+        speedRef.current = speed;
+    }, [speed]);
 
     // Parse initial on load
     useEffect(() => {
@@ -69,14 +75,16 @@ function App() {
             const generator = solveSA(parsedTasks, type, constraint, params);
 
             for await (const step of generator) {
+                const currentSpeed = speedRef.current;
+
                 setHistory(prev => {
                     // Update only every few frames if very fast, but always if slow
-                    if (speed < 10 && step.iteration % 10 !== 0) return prev;
+                    if (currentSpeed < 10 && step.iteration % 10 !== 0) return prev;
                     return [...prev, step];
                 });
 
-                // Controlled delay
-                await new Promise(r => setTimeout(r, speed));
+                // Controlled delay using Ref
+                await new Promise(r => setTimeout(r, currentSpeed));
             }
 
             setActiveTab('solution');
@@ -94,11 +102,7 @@ function App() {
     };
 
     // derived best solution
-    // derived best solution
-    // We need to find the step with the best cost or use the last known best if we track it.
-    // Actually, let's just use the last step's solution for now, but ideally we should update salbp.ts to return bestSol.
-    // For now, let's filter history for min cost.
-    const bestStep = history.reduce((prev, curr) => (curr.cost < prev.cost ? curr : prev), history[0]);
+    const bestStep = history.length > 0 ? history.reduce((prev, curr) => (curr.cost < prev.cost ? curr : prev), history[0]) : null;
     const bestSolution = bestStep ? bestStep.solution : null;
 
     return (
@@ -110,6 +114,8 @@ function App() {
                 onSolve={handleSolve}
                 isSolving={isSolving}
                 onReset={handleReset}
+                simulationSpeed={speed}
+                setSimulationSpeed={setSpeed}
             />
 
             {/* Main Content */}
@@ -124,20 +130,7 @@ function App() {
                     </div>
 
                     <div className="flex items-center space-x-6">
-                        {/* Simulation Speed Control */}
-                        {isSolving && activeTab === 'monitor' && (
-                            <div className="flex items-center space-x-2 bg-slate-900 border border-slate-800 px-3 py-1 rounded-full">
-                                <span className="text-xs text-slate-400 uppercase tracking-widest font-bold">Speed</span>
-                                <input
-                                    type="range"
-                                    min="0" max="500" step="10"
-                                    value={speed}
-                                    onChange={(e) => setSpeed(Number(e.target.value))}
-                                    className="w-24 h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
-                                />
-                                <span className="text-xs font-mono text-slate-300 w-8 text-right">{speed}ms</span>
-                            </div>
-                        )}
+                        {/* Simulation Speed Control moved to Sidebar */}
 
                         {bestSolution && (
                             <div className="flex items-center space-x-4 text-sm">
