@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from './ui/button';
 import { Textarea, Input } from './ui/input';
 import { Label } from './ui/label';
@@ -17,7 +17,7 @@ interface SidebarProps {
 
 const DEFAULT_PARAMS: AlgorithmParams = {
     initialTemp: 1000,
-    coolingRate: 0.003,
+    coolingRate: 0.95,
     maxIterations: 1000
 };
 
@@ -54,7 +54,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
                 {/* Input Section */}
                 <div className="space-y-2">
-                    <Label>Input Data (JSON)</Label>
+                    <div className="flex justify-between items-center">
+                        <Label>Input Data (JSON)</Label>
+                        <div className="relative">
+                            <input
+                                type="file"
+                                accept=".json"
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                        const reader = new FileReader();
+                                        reader.onload = (ev) => {
+                                            const content = ev.target?.result as string;
+                                            setJsonInput(content);
+                                        };
+                                        reader.readAsText(file);
+                                    }
+                                }}
+                            />
+                            <Button className="h-6 text-xs px-2 bg-slate-800 border border-slate-700 hover:bg-slate-700">
+                                Upload .json
+                            </Button>
+                        </div>
+                    </div>
                     <Textarea
                         className="font-mono text-xs h-40"
                         value={jsonInput}

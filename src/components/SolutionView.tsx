@@ -2,7 +2,7 @@ import React from 'react';
 import { Solution, Station, ProblemType } from '../types';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { cn } from '@/lib/utils';
-import { Clock, Battery, BatteryWarning } from 'lucide-react';
+// import { Clock, Battery, BatteryWarning } from 'lucide-react'; // Unused
 
 interface SolutionViewProps {
     solution: Solution | null;
