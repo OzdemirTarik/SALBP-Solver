@@ -13,6 +13,9 @@ interface SidebarProps {
     onSolve: (type: ProblemType, constraint: number, params: AlgorithmParams) => void;
     isSolving: boolean;
     onReset: () => void;
+    onStop: () => void;
+    isPaused: boolean;
+    onTogglePause: () => void;
     simulationSpeed: number;
     setSimulationSpeed: (val: number) => void;
 }
@@ -29,6 +32,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
     onSolve,
     isSolving,
     onReset,
+    onStop,
+    isPaused,
+    onTogglePause,
     simulationSpeed,
     setSimulationSpeed
 }) => {
@@ -176,19 +182,31 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
 
             <div className="p-4 border-t border-slate-800 space-y-2">
-                <Button
-                    className="w-full bg-indigo-600 hover:bg-indigo-700"
-                    onClick={handleSolve}
-                    disabled={isSolving}
-                >
-                    {isSolving ? (
-                        <>Solving...</>
-                    ) : (
-                        <>
-                            <Play className="w-4 h-4 mr-2" /> Start Optimization
-                        </>
-                    )}
-                </Button>
+                {isSolving ? (
+                    <div className="flex space-x-2">
+                        <Button
+                            variant="outline"
+                            className="flex-1 bg-amber-500/10 text-amber-500 border-amber-500/50 hover:bg-amber-500/20"
+                            onClick={onTogglePause}
+                        >
+                            {isPaused ? <Play className="w-4 h-4 mr-2" /> : <div className="w-2 h-4 border-r-2 border-l-2 border-current mr-2" />}
+                            {isPaused ? "Resume" : "Pause"}
+                        </Button>
+                        <Button
+                            className="flex-1 bg-rose-600 hover:bg-rose-700 text-white"
+                            onClick={onStop}
+                        >
+                            <div className="w-2 h-2 bg-white rounded-sm mr-2 animate-pulse" /> Stop
+                        </Button>
+                    </div>
+                ) : (
+                    <Button
+                        className="w-full bg-indigo-600 hover:bg-indigo-700"
+                        onClick={handleSolve}
+                    >
+                        <Play className="w-4 h-4 mr-2" /> Start Optimization
+                    </Button>
+                )}
                 <Button variant="outline" className="w-full bg-slate-800 hover:bg-slate-700 border-slate-700" onClick={onReset}>
                     <RotateCcw className="w-4 h-4 mr-2" /> Reset
                 </Button>

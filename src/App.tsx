@@ -36,6 +36,9 @@ function App() {
     const [currentConfig, setCurrentConfig] = useState<{ type: ProblemType, constraint: number } | null>(null);
     const [speed, setSpeed] = useState<number>(50); // ms delay
     const speedRef = useRef(speed);
+    const cancelRef = useRef(false);
+    const [isPaused, setIsPaused] = useState(false);
+    const pauseRef = useRef(false);
 
     // Sync ref
     useEffect(() => {
@@ -47,16 +50,33 @@ function App() {
         try {
             const parsed = parseInput(jsonInput);
             setTasks(parsed);
-            // Don't clear error here, let user type; if it's valid, we show it. 
-            // Only clear globally if we want to confirm validity.
-            // But let's keep it simple: if valid, update graph.
         } catch (e) {
-            // quiet fail on intermediate edits
+            // quiet fail
         }
     }, [jsonInput]);
 
+    const handleStop = () => {
+        if (isSolving) {
+            cancelRef.current = true;
+            setIsSolving(false);
+            setIsPaused(false);
+            pauseRef.current = false;
+        }
+    };
+
+    const handleTogglePause = () => {
+        const next = !isPaused;
+        setIsPaused(next);
+        pauseRef.current = next;
+    };
+
     const handleSolve = async (type: ProblemType, constraint: number, params: AlgorithmParams) => {
         try {
+            // Reset flags
+            cancelRef.current = false;
+            pauseRef.current = false;
+            setIsPaused(false);
+
             setIsSolving(true);
             setHistory([]);
             setError(null);
@@ -77,6 +97,16 @@ function App() {
             const generator = solveSA(parsedTasks, type, constraint, params);
 
             for await (const step of generator) {
+                // Check cancellation
+                if (cancelRef.current) break;
+
+                // Handle Pause
+                while (pauseRef.current) {
+                    if (cancelRef.current) break;
+                    await new Promise(r => setTimeout(r, 100));
+                }
+                if (cancelRef.current) break;
+
                 const currentSpeed = speedRef.current;
 
                 setHistory(prev => {
@@ -94,10 +124,13 @@ function App() {
             setError(e.message);
         } finally {
             setIsSolving(false);
+            setIsPaused(false);
+            pauseRef.current = false;
         }
     };
 
     const handleReset = () => {
+        handleStop(); // Stop any running simulation
         setHistory([]);
         setCurrentConfig(null);
         setActiveTab('graph');
@@ -115,6 +148,9 @@ function App() {
                 setJsonInput={setJsonInput}
                 onSolve={handleSolve}
                 isSolving={isSolving}
+                isPaused={isPaused}
+                onTogglePause={handleTogglePause}
+                onStop={handleStop}
                 onReset={handleReset}
                 simulationSpeed={speed}
                 setSimulationSpeed={setSpeed}
