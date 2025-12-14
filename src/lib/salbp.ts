@@ -340,7 +340,10 @@ export async function* solveSA(
         iteration: 0,
         cost: currentSol.cost,
         bestCost: bestSol.cost,
-        solution: currentSol
+        solution: currentSol,
+        currentTemp: temp,
+        acceptanceProbability: 1,
+        status: 'improved'
     };
 
     for (let i = 1; i <= params.maxIterations; i++) {
@@ -371,7 +374,10 @@ export async function* solveSA(
             // Step without move
             temp *= (1 - params.coolingRate);
             if (i % 10 === 0) { // Throttle updates
-                yield { iteration: i, cost: currentSol.cost, bestCost: bestSol.cost, solution: bestSol };
+                yield {
+                    iteration: i, cost: currentSol.cost, bestCost: bestSol.cost, solution: bestSol,
+                    currentTemp: temp, acceptanceProbability: 0, status: 'rejected'
+                };
             }
             continue;
         }
@@ -380,7 +386,12 @@ export async function* solveSA(
 
         // Acceptance
         const delta = candidateSol.cost - currentSol.cost;
-        if (delta < 0 || Math.random() < Math.exp(-delta / temp)) {
+        let p = 0;
+        let status: 'improved' | 'accepted_worse' | 'rejected' = 'rejected';
+
+        if (delta < 0) {
+            p = 1.0;
+            status = 'improved';
             currentSeq = candidateSeq;
             currentSol = candidateSol;
 
@@ -388,12 +399,32 @@ export async function* solveSA(
                 bestSol = currentSol;
                 bestSeq = [...currentSeq];
             }
+        } else {
+            p = Math.exp(-delta / temp);
+            if (Math.random() < p) {
+                status = 'accepted_worse';
+                currentSeq = candidateSeq;
+                currentSol = candidateSol;
+            }
         }
 
         temp *= (1 - params.coolingRate);
 
-        if (i % 20 === 0 || i === params.maxIterations) {
-            yield { iteration: i, cost: currentSol.cost, bestCost: bestSol.cost, solution: bestSol };
-        }
+        // Always yield detailed steps for smooth visualization if speed > 0
+        // Or throttle slightly if very fast.
+        // For interactivity, let's yield if something interesting happened or periodically
+        // Yielding every step might be too much for React state if 0ms delay, but fine for animation.
+        // We rely on the App loop delay.
+
+        yield {
+            iteration: i,
+            cost: currentSol.cost,
+            bestCost: bestSol.cost,
+            solution: status === 'rejected' ? currentSol : candidateSol, // Show what we considered
+            currentTemp: temp,
+            acceptanceProbability: p,
+            status: status,
+            candidateCost: candidateSol.cost
+        };
     }
 }

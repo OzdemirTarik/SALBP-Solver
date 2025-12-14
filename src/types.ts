@@ -39,4 +39,8 @@ export interface OptimizationStep {
     cost: number;
     bestCost: number;
     solution: Solution;
+    currentTemp: number;
+    acceptanceProbability: number;
+    status: 'improved' | 'accepted_worse' | 'rejected';
+    candidateCost?: number;
 }
