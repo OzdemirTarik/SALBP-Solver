@@ -6,12 +6,14 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { cn } from '@/lib/utils';
 import { Activity, CheckCircle, XCircle, ArrowRight } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface AlgorithmMonitorProps {
     history: OptimizationStep[];
 }
 
 export const AlgorithmMonitor: React.FC<AlgorithmMonitorProps> = ({ history }) => {
+    const { t } = useLanguage();
     // Current State
     const currentStep = history[history.length - 1];
 
@@ -20,7 +22,7 @@ export const AlgorithmMonitor: React.FC<AlgorithmMonitorProps> = ({ history }) =
         ? history.filter((_, i) => i % Math.ceil(history.length / 300) === 0)
         : history;
 
-    if (!currentStep) return <div className="p-8 text-center text-slate-500">Waiting for simulation to start...</div>;
+    if (!currentStep) return <div className="p-8 text-center text-slate-500">{t('waitingForSimulation')}</div>;
 
     const { currentTemp, acceptanceProbability, status, solution, candidateCost, cost } = currentStep;
 
@@ -39,7 +41,7 @@ export const AlgorithmMonitor: React.FC<AlgorithmMonitorProps> = ({ history }) =
                     <CardHeader className="bg-slate-950/50 border-b border-slate-800 py-3">
                         <CardTitle className="text-xs uppercase tracking-wider text-slate-400 font-bold flex items-center">
                             <Activity className="w-4 h-4 mr-2 text-indigo-400" />
-                            SA Mechanics
+                            {t('saMechanics')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="flex-1 p-6 space-y-8 overflow-y-auto">
@@ -56,21 +58,21 @@ export const AlgorithmMonitor: React.FC<AlgorithmMonitorProps> = ({ history }) =
                                 {isWorse && <ArrowRight className="w-4 h-4 mr-2" />}
                                 {isRejected && <XCircle className="w-4 h-4 mr-2" />}
 
-                                {isImproved && "FOUND BETTER SOLUTION"}
-                                {isWorse && "ACCEPTED WORSE SOLUTION"}
-                                {isRejected && "REJECTED MOVE"}
+                                {isImproved && t('foundBetterSolution')}
+                                {isWorse && t('acceptedWorseSolution')}
+                                {isRejected && t('rejectedMove')}
                             </div>
                             <div className="text-xs text-slate-500 h-4">
-                                {isImproved && `Cost decreased from ${candidateCost ? (candidateCost + (candidateCost - cost)) : '?'} to ${cost}`}
-                                {isWorse && `Cost increased, but accepted by probability`}
-                                {isRejected && `Cost too high & probability check failed`}
+                                {isImproved && `${t('costDecreased')} ${candidateCost ? (candidateCost + (candidateCost - cost)) : '?'} ${t('to')} ${cost}`}
+                                {isWorse && t('costIncreasedAccepted')}
+                                {isRejected && t('costTooHigh')}
                             </div>
                         </div>
 
                         {/* Temperature Gauge */}
                         <div className="space-y-2">
                             <div className="flex justify-between text-xs font-mono text-slate-400">
-                                <span>TEMP</span>
+                                <span>{t('temp')}</span>
                                 <span>{currentTemp?.toFixed(2)}</span>
                             </div>
                             <div className="h-4 bg-slate-800 rounded-full overflow-hidden relative border border-slate-700">
@@ -80,15 +82,15 @@ export const AlgorithmMonitor: React.FC<AlgorithmMonitorProps> = ({ history }) =
                                 />
                             </div>
                             <div className="flex justify-between text-[10px] text-slate-600">
-                                <span>Cool</span>
-                                <span>Hot</span>
+                                <span>{t('cool')}</span>
+                                <span>{t('hot')}</span>
                             </div>
                         </div>
 
                         {/* Probability Meter (Only relevant if not improved) */}
                         <div className={cn("space-y-2 transition-opacity duration-300", isImproved ? "opacity-30 grayscale" : "opacity-100")}>
                             <div className="flex justify-between text-xs font-mono text-slate-400">
-                                <span>P(Accept)</span>
+                                <span>{t('pAccept')}</span>
                                 <span>{(acceptanceProbability * 100).toFixed(1)}%</span>
                             </div>
                             <div className="h-4 bg-slate-800 rounded-full overflow-hidden relative border border-slate-700">
@@ -105,7 +107,7 @@ export const AlgorithmMonitor: React.FC<AlgorithmMonitorProps> = ({ history }) =
                                 />
                             </div>
                             <div className="text-[10px] text-slate-600 text-center">
-                                If random roll (white line) lands in blue area, accept.
+                                {t('pAcceptExplanation')}
                             </div>
                         </div>
                     </CardContent>
@@ -114,7 +116,7 @@ export const AlgorithmMonitor: React.FC<AlgorithmMonitorProps> = ({ history }) =
                 {/* Right: Convergence Graph */}
                 <Card className="lg:col-span-2 bg-slate-900 border-slate-800 flex flex-col">
                     <CardHeader className="bg-slate-950/50 border-b border-slate-800 py-3">
-                        <CardTitle className="text-xs uppercase tracking-wider text-slate-400 font-bold">Convergence History</CardTitle>
+                        <CardTitle className="text-xs uppercase tracking-wider text-slate-400 font-bold">{t('convergenceHistory')}</CardTitle>
                     </CardHeader>
                     <div className="flex-1 min-h-[250px] p-2">
                         <ResponsiveContainer width="100%" height="100%">
@@ -123,12 +125,11 @@ export const AlgorithmMonitor: React.FC<AlgorithmMonitorProps> = ({ history }) =
                                 <XAxis dataKey="iteration" stroke="#475569" fontSize={10} tickLine={false} axisLine={false} />
                                 <YAxis stroke="#475569" fontSize={10} tickLine={false} axisLine={false} domain={['auto', 'auto']} />
                                 <Tooltip
-                                    contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', color: '#f8fafc', fontSize: '12px' }}
                                     labelStyle={{ color: '#94a3b8' }}
                                 />
                                 <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
-                                <Line type="monotone" dataKey="cost" stroke="#6366f1" strokeWidth={1} dot={false} name="Current Cost" isAnimationActive={false} />
-                                <Line type="stepAfter" dataKey="bestCost" stroke="#10b981" strokeWidth={2} dot={false} name="Best Found" isAnimationActive={false} />
+                                <Line type="monotone" dataKey="cost" stroke="#6366f1" strokeWidth={1} dot={false} name={t('currentCost')} isAnimationActive={false} />
+                                <Line type="stepAfter" dataKey="bestCost" stroke="#10b981" strokeWidth={2} dot={false} name={t('bestFound')} isAnimationActive={false} />
                             </LineChart>
                         </ResponsiveContainer>
                     </div>
@@ -138,9 +139,9 @@ export const AlgorithmMonitor: React.FC<AlgorithmMonitorProps> = ({ history }) =
             {/* Bottom Row: Live Layout Preview */}
             <Card className="h-48 bg-slate-900 border-slate-800 flex flex-col shrink-0">
                 <CardHeader className="bg-slate-950/50 border-b border-slate-800 py-3 flex flex-row justify-between items-center">
-                    <CardTitle className="text-xs uppercase tracking-wider text-slate-400 font-bold">Live Assembly Configuration (Testing)</CardTitle>
+                    <CardTitle className="text-xs uppercase tracking-wider text-slate-400 font-bold">{t('liveAssembly')}</CardTitle>
                     <div className="text-xs font-mono text-slate-500">
-                        Stations: {solution.stations.length} | Cycle Time: {solution.cycleTime}
+                        {t('stations')}: {solution.stations.length} | {t('cycleTime')}: {solution.cycleTime}
                     </div>
                 </CardHeader>
                 <div className="flex-1 p-4 overflow-x-auto overflow-y-hidden whitespace-nowrap scrollbar-thin scrollbar-thumb-slate-700">

@@ -20,10 +20,12 @@ interface SidebarProps {
     setSimulationSpeed: (val: number) => void;
 }
 
+import { useLanguage } from '../context/LanguageContext';
+
 const DEFAULT_PARAMS: AlgorithmParams = {
     initialTemp: 1000,
     coolingRate: 0.95,
-    maxIterations: 1000
+    maxIterations: 400
 };
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -38,6 +40,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     simulationSpeed,
     setSimulationSpeed
 }) => {
+    const { t, language, setLanguage } = useLanguage();
     const [problemType, setProblemType] = useState<ProblemType>('SALBP-1');
     const [constraint, setConstraint] = useState<string>(''); // C or N
     const [params, setParams] = useState<AlgorithmParams>(DEFAULT_PARAMS);
@@ -45,7 +48,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     const handleSolve = () => {
         const val = parseFloat(constraint);
         if (isNaN(val) || val <= 0) {
-            alert("Please enter a valid constraint value (C or N)");
+            alert(t('errorConstraint'));
             return;
         }
         onSolve(problemType, val, params);
@@ -54,10 +57,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
     return (
         <div className="w-80 h-full border-r border-slate-800 bg-slate-950 flex flex-col overflow-y-auto">
             <div className="p-4 border-b border-slate-800">
-                <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
-                    SALBP Solver
-                </h1>
-                <p className="text-xs text-slate-500">Antigravity & User Pair Programming</p>
+                <div className="flex justify-between items-start mb-1">
+                    <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+                        {t('appTitle')}
+                    </h1>
+                    <div className="flex space-x-1">
+                        <button
+                            onClick={() => setLanguage('en')}
+                            className={`text-xs px-1.5 py-0.5 rounded ${language === 'en' ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-white'}`}
+                        >
+                            EN
+                        </button>
+                        <button
+                            onClick={() => setLanguage('tr')}
+                            className={`text-xs px-1.5 py-0.5 rounded ${language === 'tr' ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-white'}`}
+                        >
+                            TR
+                        </button>
+                    </div>
+                </div>
+                <p className="text-xs text-slate-500">{t('sidebarSubtitle')}</p>
             </div>
 
             <div className="flex-1 p-4 space-y-6">
@@ -65,7 +84,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {/* Input Section */}
                 <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                        <Label>Input Data (JSON)</Label>
+                        <Label>{t('inputData')}</Label>
                         <div className="relative">
                             <input
                                 type="file"
@@ -84,7 +103,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                 }}
                             />
                             <Button className="h-6 text-xs px-2 bg-slate-800 border border-slate-700 hover:bg-slate-700">
-                                Upload .json
+                                {t('uploadJson')}
                             </Button>
                         </div>
                     </div>
@@ -99,29 +118,29 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {/* Problem Config */}
                 <Card className="bg-slate-900/50 border-slate-800">
                     <CardHeader className="p-4 pb-2">
-                        <CardTitle className="text-sm">Configuration</CardTitle>
+                        <CardTitle className="text-sm">{t('configuration')}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-4 pt-2 space-y-4">
                         <div className="space-y-1">
-                            <Label>Problem Type</Label>
+                            <Label>{t('problemType')}</Label>
                             <Select
                                 value={problemType}
                                 onChange={(e) => setProblemType(e.target.value as ProblemType)}
                             >
-                                <option value="SALBP-1">SALBP-1 (Min N given C)</option>
-                                <option value="SALBP-2">SALBP-2 (Min C given N)</option>
+                                <option value="SALBP-1">{t('minN')}</option>
+                                <option value="SALBP-2">{t('minC')}</option>
                             </Select>
                         </div>
 
                         <div className="space-y-1">
                             <Label>
-                                {problemType === 'SALBP-1' ? "Cycle Time (C)" : "Number of Stations (N)"}
+                                {problemType === 'SALBP-1' ? t('cycleTime') : t('stationCount')}
                             </Label>
                             <Input
                                 type="number"
                                 value={constraint}
                                 onChange={(e) => setConstraint(e.target.value)}
-                                placeholder={problemType === 'SALBP-1' ? "e.g. 10" : "e.g. 4"}
+                                placeholder={problemType === 'SALBP-1' ? t('enterConstraint') : "e.g. 4"}
                             />
                         </div>
                     </CardContent>
@@ -130,12 +149,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {/* Algorithm Params */}
                 <Card className="bg-slate-900/50 border-slate-800">
                     <CardHeader className="p-4 pb-2">
-                        <CardTitle className="text-sm">Simulated Annealing</CardTitle>
+                        <CardTitle className="text-sm">{t('simulatedAnnealing')}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-4 pt-2 space-y-4">
                         <div className="grid grid-cols-2 gap-2">
                             <div className="space-y-1">
-                                <Label className="text-xs">Init Temp</Label>
+                                <Label className="text-xs">{t('initTemp')}</Label>
                                 <Input
                                     type="number"
                                     className="h-8 text-xs"
@@ -144,7 +163,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                 />
                             </div>
                             <div className="space-y-1">
-                                <Label className="text-xs">Cooling</Label>
+                                <Label className="text-xs">{t('cooling')}</Label>
                                 <Input
                                     type="number" step="0.001"
                                     className="h-8 text-xs"
@@ -154,7 +173,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <Label className="text-xs">Max Iterations</Label>
+                            <Label className="text-xs">{t('maxIterations')}</Label>
                             <Input
                                 type="number"
                                 className="h-8 text-xs"
@@ -166,8 +185,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         {/* Speed Control (New) */}
                         <div className="space-y-1 pt-2 border-t border-slate-800">
                             <div className="flex justify-between items-center">
-                                <Label className="text-xs text-indigo-400 font-semibold">Simulation Speed</Label>
-                                <span className="text-[10px] font-mono text-slate-400">{simulationSpeed}ms</span>
+                                <Label className="text-xs text-indigo-400 font-semibold">{t('simulationSpeed')}</Label>
+                                <span className="text-[10px] font-mono text-slate-400">{simulationSpeed}{t('ms')}</span>
                             </div>
                             <input
                                 type="range"
@@ -190,13 +209,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             onClick={onTogglePause}
                         >
                             {isPaused ? <Play className="w-4 h-4 mr-2" /> : <div className="w-2 h-4 border-r-2 border-l-2 border-current mr-2" />}
-                            {isPaused ? "Resume" : "Pause"}
+                            {isPaused ? t('resume') : t('pause')}
                         </Button>
                         <Button
                             className="flex-1 bg-rose-600 hover:bg-rose-700 text-white"
                             onClick={onStop}
                         >
-                            <div className="w-2 h-2 bg-white rounded-sm mr-2 animate-pulse" /> Stop
+                            <div className="w-2 h-2 bg-white rounded-sm mr-2 animate-pulse" /> {t('stop')}
                         </Button>
                     </div>
                 ) : (
@@ -204,11 +223,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         className="w-full bg-indigo-600 hover:bg-indigo-700"
                         onClick={handleSolve}
                     >
-                        <Play className="w-4 h-4 mr-2" /> Start Optimization
+                        <Play className="w-4 h-4 mr-2" /> {t('startOptimization')}
                     </Button>
                 )}
                 <Button variant="outline" className="w-full bg-slate-800 hover:bg-slate-700 border-slate-700" onClick={onReset}>
-                    <RotateCcw className="w-4 h-4 mr-2" /> Reset
+                    <RotateCcw className="w-4 h-4 mr-2" /> {t('reset')}
                 </Button>
             </div>
         </div >

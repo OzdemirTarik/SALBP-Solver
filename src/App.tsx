@@ -7,6 +7,7 @@ import { parseInput, solveSA, hasCycle } from './lib/salbp'
 import { OptimizationStep, ProblemType, AlgorithmParams, Task } from './types'
 import { cn } from './lib/utils'
 import { LayoutDashboard, Network, LineChart as IconLineChart } from 'lucide-react'
+import { useLanguage } from './context/LanguageContext'
 
 // Default Jackson's 11-task problem
 const DEFAULT_JSON = `{
@@ -26,6 +27,7 @@ const DEFAULT_JSON = `{
 }`;
 
 function App() {
+    const { t } = useLanguage();
     const [jsonInput, setJsonInput] = useState(DEFAULT_JSON);
     const [tasks, setTasks] = useState<Task[]>([]);
     const [history, setHistory] = useState<OptimizationStep[]>([]);
@@ -85,7 +87,7 @@ function App() {
             const parsedTasks = parseInput(jsonInput);
 
             if (hasCycle(parsedTasks)) {
-                throw new Error("The input graph contains a cycle. Please fix dependencies.");
+                throw new Error(t('errorCycle'));
             }
 
             setTasks(parsedTasks);
@@ -162,9 +164,9 @@ function App() {
                 {/* Top Bar / Tabs */}
                 <div className="h-14 border-b border-slate-800 bg-slate-950 flex items-center px-4 justify-between">
                     <div className="flex space-x-1 bg-slate-900 p-1 rounded-lg border border-slate-800">
-                        <TabButton isActive={activeTab === 'graph'} onClick={() => setActiveTab('graph')} icon={<Network size={16} />} label="Precedence Graph" />
-                        <TabButton isActive={activeTab === 'solution'} onClick={() => setActiveTab('solution')} icon={<LayoutDashboard size={16} />} label="Solution" />
-                        <TabButton isActive={activeTab === 'monitor'} onClick={() => setActiveTab('monitor')} icon={<IconLineChart size={16} />} label="Algorithm Monitor" />
+                        <TabButton isActive={activeTab === 'graph'} onClick={() => setActiveTab('graph')} icon={<Network size={16} />} label={t('graphTab')} />
+                        <TabButton isActive={activeTab === 'solution'} onClick={() => setActiveTab('solution')} icon={<LayoutDashboard size={16} />} label={t('solutionTab')} />
+                        <TabButton isActive={activeTab === 'monitor'} onClick={() => setActiveTab('monitor')} icon={<IconLineChart size={16} />} label={t('monitorTab')} />
                     </div>
 
                     <div className="flex items-center space-x-6">
@@ -173,7 +175,7 @@ function App() {
                         {bestSolution && (
                             <div className="flex items-center space-x-4 text-sm">
                                 <div className="flex items-center space-x-2">
-                                    <span className="text-slate-500">Best Cost:</span>
+                                    <span className="text-slate-500">{t('bestCost')}:</span>
                                     <span className="font-mono text-emerald-400">{bestSolution.cost.toFixed(2)}</span>
                                 </div>
                             </div>
