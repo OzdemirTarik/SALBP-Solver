@@ -57,7 +57,16 @@ export const translations = {
         convergenceHistory: "Convergence History",
         currentCost: "Current Cost",
         bestFound: "Best Found",
-        liveAssembly: "Live Assembly Configuration (Testing)"
+        liveAssembly: "Live Assembly Configuration (Testing)",
+        convergenceX: "Iteration",
+        convergenceY: "Cost",
+        cycleLimit: "Cycle Time Limit",
+        utilization: "Utilization",
+        legendEfficient: "Efficient (<80%)",
+        legendModerate: "Moderate (80-100%)",
+        legendOverload: "Overload (>100%)",
+        convergenceTitle: "Cost over Iterations",
+        convergenceDesc: "Tracks the optimization progress. Lower cost is better.",
     },
     tr: {
         appTitle: "SALBP Çözücü",
@@ -115,6 +124,15 @@ export const translations = {
         convergenceHistory: "Yakınsama Geçmişi",
         currentCost: "Mevcut Maliyet",
         bestFound: "Bulunan En İyi",
-        liveAssembly: "Canlı Montaj Yapılandırması (Test)"
+        liveAssembly: "Canlı Montaj Yapılandırması (Test)",
+        convergenceX: "İterasyon",
+        convergenceY: "Maliyet",
+        cycleLimit: "Çevrim Süresi Limiti",
+        utilization: "Kullanım",
+        legendEfficient: "Verimli (<%80)",
+        legendModerate: "Orta (%80-100)",
+        legendOverload: "Aşırı Yük (>%100)",
+        convergenceTitle: "Zaman İçindeki Maliyet",
+        convergenceDesc: "Optimizasyon sürecini izler. Düşük maliyet daha iyidir.",
     }
 };

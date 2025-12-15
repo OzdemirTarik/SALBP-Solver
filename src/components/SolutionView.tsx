@@ -27,30 +27,30 @@ export const SolutionView: React.FC<SolutionViewProps> = ({ solution, problemTyp
     return (
         <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Card className="bg-indigo-950/30 border-indigo-900">
-                    <CardHeader className="p-4 py-2"><CardTitle className="text-sm text-indigo-300">{t('stations')}</CardTitle></CardHeader>
+                <Card className="bg-indigo-50 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-900">
+                    <CardHeader className="p-4 py-2"><CardTitle className="text-sm text-indigo-600 dark:text-indigo-300">{t('stations')}</CardTitle></CardHeader>
                     <CardContent className="p-4 py-2">
-                        <div className="text-2xl font-bold">{solution.stations.length}</div>
-                        {problemType === 'SALBP-2' && <div className="text-xs text-indigo-400">{t('target')}: {constraint}</div>}
+                        <div className="text-2xl font-bold text-slate-900 dark:text-slate-50">{solution.stations.length}</div>
+                        {problemType === 'SALBP-2' && <div className="text-xs text-indigo-500 dark:text-indigo-400">{t('target')}: {constraint}</div>}
                     </CardContent>
                 </Card>
-                <Card className="bg-emerald-950/30 border-emerald-900">
-                    <CardHeader className="p-4 py-2"><CardTitle className="text-sm text-emerald-300">{t('cycleTime')}</CardTitle></CardHeader>
+                <Card className="bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900">
+                    <CardHeader className="p-4 py-2"><CardTitle className="text-sm text-emerald-600 dark:text-emerald-300">{t('cycleTime')}</CardTitle></CardHeader>
                     <CardContent className="p-4 py-2">
-                        <div className="text-2xl font-bold">{cycleTime}</div>
-                        {problemType === 'SALBP-1' && <div className="text-xs text-emerald-400">{t('limit')}: {constraint}</div>}
+                        <div className="text-2xl font-bold text-slate-900 dark:text-slate-50">{cycleTime}</div>
+                        {problemType === 'SALBP-1' && <div className="text-xs text-emerald-500 dark:text-emerald-400">{t('limit')}: {constraint}</div>}
                     </CardContent>
                 </Card>
-                <Card className="bg-slate-800/50 border-slate-700">
-                    <CardHeader className="p-4 py-2"><CardTitle className="text-sm text-slate-400">{t('efficiency')}</CardTitle></CardHeader>
+                <Card className="bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700">
+                    <CardHeader className="p-4 py-2"><CardTitle className="text-sm text-slate-500 dark:text-slate-400">{t('efficiency')}</CardTitle></CardHeader>
                     <CardContent className="p-4 py-2">
-                        <div className="text-2xl font-bold">{(solution.efficiency * 100).toFixed(1)}%</div>
+                        <div className="text-2xl font-bold text-slate-900 dark:text-slate-50">{(solution.efficiency * 100).toFixed(1)}%</div>
                     </CardContent>
                 </Card>
-                <Card className="bg-slate-800/50 border-slate-700">
-                    <CardHeader className="p-4 py-2"><CardTitle className="text-sm text-slate-400">{t('smoothness')}</CardTitle></CardHeader>
+                <Card className="bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700">
+                    <CardHeader className="p-4 py-2"><CardTitle className="text-sm text-slate-500 dark:text-slate-400">{t('smoothness')}</CardTitle></CardHeader>
                     <CardContent className="p-4 py-2">
-                        <div className="text-2xl font-bold">{solution.smoothnessIndex.toFixed(2)}</div>
+                        <div className="text-2xl font-bold text-slate-900 dark:text-slate-50">{solution.smoothnessIndex.toFixed(2)}</div>
                     </CardContent>
                 </Card>
             </div>
@@ -76,21 +76,21 @@ const StationCard = ({ station, cycleTime, index }: { station: Station, cycleTim
     else if (isLow) barColor = "bg-blue-500";
 
     return (
-        <Card className="border-slate-800 bg-slate-900 hover:border-slate-600 transition-colors">
-            <CardHeader className="p-3 bg-slate-950/50 border-b border-slate-800 flex flex-row items-center justify-between">
-                <span className="font-bold text-sm">{t('station')} {index + 1}</span>
-                <span className={cn("text-xs px-2 py-0.5 rounded-full font-mono", isBottleneck ? "bg-rose-900 text-rose-200" : "bg-emerald-900 text-emerald-200")}>
+        <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-600 transition-colors shadow-sm">
+            <CardHeader className="p-3 bg-slate-50 dark:bg-slate-950/50 border-b border-slate-200 dark:border-slate-800 flex flex-row items-center justify-between">
+                <span className="font-bold text-sm text-slate-900 dark:text-slate-100">{t('station')} {index + 1}</span>
+                <span className={cn("text-xs px-2 py-0.5 rounded-full font-mono", isBottleneck ? "bg-rose-100 dark:bg-rose-900 text-rose-700 dark:text-rose-200" : "bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-200")}>
                     {station.totalTime}/{cycleTime}
                 </span>
             </CardHeader>
             <CardContent className="p-3 space-y-3">
                 {/* Usage Bar */}
                 <div className="space-y-1">
-                    <div className="flex justify-between text-[10px] text-slate-400 uppercase tracking-wider">
+                    <div className="flex justify-between text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                         <span>{t('load')}</span>
                         <span>{usage.toFixed(0)}%</span>
                     </div>
-                    <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+                    <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                         <div className={cn("h-full transition-all duration-500", barColor)} style={{ width: `${usage}%` }} />
                     </div>
                 </div>
@@ -100,14 +100,14 @@ const StationCard = ({ station, cycleTime, index }: { station: Station, cycleTim
                     <div className="text-[10px] text-slate-500 mb-1 uppercase tracking-wider">{t('assignedTasks')}</div>
                     <div className="flex flex-wrap gap-1">
                         {station.tasks.map(tid => (
-                            <span key={tid} className="inline-flex items-center justify-center w-8 h-8 rounded bg-slate-800 border border-slate-700 text-xs font-medium text-slate-300">
+                            <span key={tid} className="inline-flex items-center justify-center w-8 h-8 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300">
                                 {tid}
                             </span>
                         ))}
                     </div>
                 </div>
 
-                <div className="text-[10px] text-slate-500 flex justify-between pt-1 border-t border-slate-800/50">
+                <div className="text-[10px] text-slate-500 flex justify-between pt-1 border-t border-slate-200 dark:border-slate-800/50">
                     <span>{t('idle')}: {station.idleTime}</span>
                 </div>
             </CardContent>

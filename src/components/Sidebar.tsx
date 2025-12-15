@@ -5,7 +5,8 @@ import { Label } from './ui/label';
 import { Select } from './ui/select';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { AlgorithmParams, ProblemType } from '../types';
-import { Play, RotateCcw } from 'lucide-react';
+import { Play, RotateCcw, Moon, Sun } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 interface SidebarProps {
     jsonInput: string;
@@ -41,6 +42,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     setSimulationSpeed
 }) => {
     const { t, language, setLanguage } = useLanguage();
+    const { theme, toggleTheme } = useTheme();
     const [problemType, setProblemType] = useState<ProblemType>('SALBP-1');
     const [constraint, setConstraint] = useState<string>(''); // C or N
     const [params, setParams] = useState<AlgorithmParams>(DEFAULT_PARAMS);
@@ -55,8 +57,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
     };
 
     return (
-        <div className="w-80 h-full border-r border-slate-800 bg-slate-950 flex flex-col overflow-y-auto">
-            <div className="p-4 border-b border-slate-800">
+        <div className="w-80 h-full border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex flex-col overflow-y-auto transition-colors duration-200">
+            <div className="p-4 border-b border-slate-200 dark:border-slate-800">
                 <div className="flex justify-between items-start mb-1">
                     <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
                         {t('appTitle')}
@@ -64,15 +66,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     <div className="flex space-x-1">
                         <button
                             onClick={() => setLanguage('en')}
-                            className={`text-xs px-1.5 py-0.5 rounded ${language === 'en' ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-white'}`}
+                            className={`text-xs px-1.5 py-0.5 rounded ${language === 'en' ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'}`}
                         >
                             EN
                         </button>
                         <button
                             onClick={() => setLanguage('tr')}
-                            className={`text-xs px-1.5 py-0.5 rounded ${language === 'tr' ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-white'}`}
+                            className={`text-xs px-1.5 py-0.5 rounded ${language === 'tr' ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'}`}
                         >
                             TR
+                        </button>
+                        <button
+                            onClick={toggleTheme}
+                            className="ml-2 text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400"
+                        >
+                            {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
                         </button>
                     </div>
                 </div>
@@ -102,7 +110,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                     }
                                 }}
                             />
-                            <Button className="h-6 text-xs px-2 bg-slate-800 border border-slate-700 hover:bg-slate-700">
+                            <Button className="h-6 text-xs px-2 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700">
                                 {t('uploadJson')}
                             </Button>
                         </div>
@@ -116,7 +124,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </div>
 
                 {/* Problem Config */}
-                <Card className="bg-slate-900/50 border-slate-800">
+                <Card className="bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800">
                     <CardHeader className="p-4 pb-2">
                         <CardTitle className="text-sm">{t('configuration')}</CardTitle>
                     </CardHeader>
@@ -147,7 +155,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </Card>
 
                 {/* Algorithm Params */}
-                <Card className="bg-slate-900/50 border-slate-800">
+                <Card className="bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800">
                     <CardHeader className="p-4 pb-2">
                         <CardTitle className="text-sm">{t('simulatedAnnealing')}</CardTitle>
                     </CardHeader>
@@ -183,9 +191,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         </div>
 
                         {/* Speed Control (New) */}
-                        <div className="space-y-1 pt-2 border-t border-slate-800">
+                        <div className="space-y-1 pt-2 border-t border-slate-200 dark:border-slate-800">
                             <div className="flex justify-between items-center">
-                                <Label className="text-xs text-indigo-400 font-semibold">{t('simulationSpeed')}</Label>
+                                <Label className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold">{t('simulationSpeed')}</Label>
                                 <span className="text-[10px] font-mono text-slate-400">{simulationSpeed}{t('ms')}</span>
                             </div>
                             <input
@@ -193,14 +201,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                 min="0" max="500" step="10"
                                 value={simulationSpeed}
                                 onChange={(e) => setSimulationSpeed && setSimulationSpeed(Number(e.target.value))}
-                                className="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                                className="w-full h-1 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
                             />
                         </div>
                     </CardContent>
                 </Card>
             </div>
 
-            <div className="p-4 border-t border-slate-800 space-y-2">
+            <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-2">
                 {isSolving ? (
                     <div className="flex space-x-2">
                         <Button
@@ -226,10 +234,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         <Play className="w-4 h-4 mr-2" /> {t('startOptimization')}
                     </Button>
                 )}
-                <Button variant="outline" className="w-full bg-slate-800 hover:bg-slate-700 border-slate-700" onClick={onReset}>
+                <Button variant="outline" className="w-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100" onClick={onReset}>
                     <RotateCcw className="w-4 h-4 mr-2" /> {t('reset')}
                 </Button>
             </div>
-        </div >
+        </div>
     );
 };

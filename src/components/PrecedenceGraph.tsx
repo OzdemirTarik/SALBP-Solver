@@ -11,13 +11,14 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { Task } from '../types';
+import { useTheme } from '../context/ThemeContext';
 
 interface PrecedenceGraphProps {
     tasks: Task[];
 }
 
 // Simple layering layout algorithm
-const getLayoutedElements = (tasks: Task[]) => {
+const getLayoutedElements = (tasks: Task[], isDark: boolean) => {
     // 1. Calculate levels
     const levels = new Map<number, number>();
     const inDegree = new Map<number, number>();
@@ -80,9 +81,9 @@ const getLayoutedElements = (tasks: Task[]) => {
                     y: lvl * (NODE_HEIGHT + Y_GAP) + 50
                 },
                 style: {
-                    background: '#1e293b',
-                    color: '#fff',
-                    border: '1px solid #475569',
+                    background: isDark ? '#1e293b' : '#ffffff',
+                    color: isDark ? '#fff' : '#0f172a',
+                    border: isDark ? '1px solid #475569' : '1px solid #e2e8f0',
                     borderRadius: '8px',
                     width: 100,
                     padding: '10px',
@@ -102,9 +103,9 @@ const getLayoutedElements = (tasks: Task[]) => {
                 type: ConnectionLineType.SmoothStep,
                 markerEnd: {
                     type: MarkerType.ArrowClosed,
-                    color: '#64748b',
+                    color: isDark ? '#64748b' : '#94a3b8',
                 },
-                style: { stroke: '#64748b' }
+                style: { stroke: isDark ? '#64748b' : '#94a3b8' }
             });
         });
     });
@@ -113,19 +114,22 @@ const getLayoutedElements = (tasks: Task[]) => {
 };
 
 export const PrecedenceGraph: React.FC<PrecedenceGraphProps> = ({ tasks }) => {
-    const { nodes: initialNodes, edges: initialEdges } = useMemo(() => getLayoutedElements(tasks), [tasks]);
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
+
+    const { nodes: initialNodes, edges: initialEdges } = useMemo(() => getLayoutedElements(tasks, isDark), [tasks, isDark]);
 
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
     React.useEffect(() => {
-        const layout = getLayoutedElements(tasks);
+        const layout = getLayoutedElements(tasks, isDark);
         setNodes(layout.nodes);
         setEdges(layout.edges);
-    }, [tasks, setNodes, setEdges]);
+    }, [tasks, isDark, setNodes, setEdges]);
 
     return (
-        <div className="w-full h-full min-h-[500px] bg-slate-900/30 rounded-lg border border-slate-800 overflow-hidden">
+        <div className="w-full h-full min-h-[500px] bg-slate-100 dark:bg-slate-900/30 rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
             <ReactFlow
                 nodes={nodes}
                 edges={edges}
@@ -134,8 +138,8 @@ export const PrecedenceGraph: React.FC<PrecedenceGraphProps> = ({ tasks }) => {
                 fitView
                 attributionPosition="bottom-right"
             >
-                <Background color="#334155" gap={16} />
-                <Controls />
+                <Background color={isDark ? "#334155" : "#cbd5e1"} gap={16} />
+                <Controls className="fill-slate-500" />
             </ReactFlow>
         </div>
     );

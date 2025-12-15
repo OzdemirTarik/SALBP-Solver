@@ -143,7 +143,7 @@ function App() {
     const bestSolution = bestStep ? bestStep.solution : null;
 
     return (
-        <div className="flex h-screen bg-slate-950 text-slate-50 font-sans overflow-hidden">
+        <div className="flex h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 font-sans overflow-hidden transition-colors duration-200">
             {/* Sidebar */}
             <Sidebar
                 jsonInput={jsonInput}
@@ -162,8 +162,8 @@ function App() {
             <div className="flex-1 flex flex-col min-w-0">
 
                 {/* Top Bar / Tabs */}
-                <div className="h-14 border-b border-slate-800 bg-slate-950 flex items-center px-4 justify-between">
-                    <div className="flex space-x-1 bg-slate-900 p-1 rounded-lg border border-slate-800">
+                <div className="h-14 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center px-4 justify-between transition-colors duration-200">
+                    <div className="flex space-x-1 bg-slate-100 dark:bg-slate-900 p-1 rounded-lg border border-slate-200 dark:border-slate-800">
                         <TabButton isActive={activeTab === 'graph'} onClick={() => setActiveTab('graph')} icon={<Network size={16} />} label={t('graphTab')} />
                         <TabButton isActive={activeTab === 'solution'} onClick={() => setActiveTab('solution')} icon={<LayoutDashboard size={16} />} label={t('solutionTab')} />
                         <TabButton isActive={activeTab === 'monitor'} onClick={() => setActiveTab('monitor')} icon={<IconLineChart size={16} />} label={t('monitorTab')} />
@@ -192,7 +192,7 @@ function App() {
                 )}
 
                 {/* View Area */}
-                <div className="flex-1 overflow-auto p-4 bg-[#0B1120]">
+                <div className="flex-1 overflow-auto p-4 bg-slate-100 dark:bg-[#0B1120] transition-colors duration-200">
                     {activeTab === 'graph' && (
                         <PrecedenceGraph tasks={tasks} />
                     )}
@@ -220,7 +220,7 @@ function TabButton({ isActive, onClick, icon, label }: { isActive: boolean, onCl
                 "flex items-center space-x-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all",
                 isActive
                     ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800"
+                    : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800"
             )}
         >
             {icon}
