@@ -1,32 +1,82 @@
 # SALBP Solver & Visualizer
 
-A sophisticated React application to solve and visualize Simple Assembly Line Balancing Problems (SALBP) using Simulated Annealing.
+A sophisticated React application to solve and verify Simple Assembly Line Balancing Problems (SALBP) using Simulated Annealing. This tool allows users to visualize task dependencies, simulate assembly lines, and optimize station configurations.
 
-## Prerequisites
-- Node.js (v18+)
-- npm
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Node](https://img.shields.io/badge/node-%3E%3D18-green.svg)
 
-## Setup & Run
+## 🚀 Features
 
-I have set up a portable version of Node.js for you in the `tools` folder, so you don't need to install anything globally.
+- **Advanced Solver**: Implements SALBP-1 (Minimize Number of Stations) and SALBP-2 (Minimize Cycle Time) using a Simulated Annealing algorithm.
+- **Interactive Visualization**:
+  - **Precedence Graph**: Visual Directed Acyclic Graph (DAG) of task dependencies.
+  - **Live Assembly Line**: Real-time visualization of stations and task assignments.
+  - **Convergence History**: Chart showing the algorithm's progress over iterations.
+- **Data Management**: Easy-to-use JSON editor for defining task times and precedence constraints.
+- **Responsive Design**: Modern UI built with Tailwind CSS for a seamless experience.
+- **Localization**: Supports multiple languages (e.g., Turkish, English).
 
-1.  **Start the App**:
-    Double-click `run_app.bat` in the root `SALBP` folder.
-    
-    *Alternatively, via terminal:*
-    ```powershell
-    .\run_app.bat
+## 🛠️ Technology Stack
+
+- **Frontend**: [React](https://reactjs.org/) (TypeScript), [Vite](https://vitejs.dev/)
+- **State Management**: React Context API
+- **Visualization**: [React Flow](https://reactflow.dev/) (Graphs), [Recharts](https://recharts.org/) (Charts)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+
+## 📂 Project Structure
+
+```
+src/
+├── components/       # Reusable UI components (AlgorithmMonitor, StationView, etc.)
+├── context/          # Global state management (GlobalContext, LanguageContext)
+├── lib/             # Core logic and helper functions
+│   ├── algorithms/   # Simulated Annealing implementation
+│   └── validation/   # Input validation logic
+├── types/            # TypeScript type definitions
+└── App.tsx           # Main application entry
+```
+
+## 🏁 Getting Started
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- npm or yarn
+
+### Installation
+
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/your-username/SALBP-Solver.git
+    cd SALBP-Solver
     ```
 
-2.  Open the link shown in the terminal (usually http://localhost:5173).
+2.  Install dependencies:
+    ```bash
+    npm install
+    ```
 
-## Features
-- **Data Input**: Edit inputs in JSON format.
-- **Precedence Graph**: Visual DAG of tasks.
-- **Solver**: SALBP-1 (Min N) and SALBP-2 (Min C) using Simulated Annealing.
-- **Visualization**: 
-  - Real-time convergence chart.
-  - Detailed Station views with utilization highlighting.
+### Running Locally
 
-## Troubleshooting
-If you see type errors in your IDE, ensure `npm install` has been run to fetch TypeScript definitions.
+To start the development server:
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1.  Fork the project
+2.  Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4.  Push to the branch (`git push origin feature/AmazingFeature`)
+5.  Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
