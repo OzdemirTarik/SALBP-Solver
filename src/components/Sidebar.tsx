@@ -5,10 +5,13 @@ import { Label } from './ui/label';
 import { Select } from './ui/select';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { AlgorithmParams, ProblemType } from '../types';
-import { Play, RotateCcw, Moon, Sun } from 'lucide-react';
+import { Play, RotateCcw, Moon, Sun, X } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { cn } from '../lib/utils';
 
 interface SidebarProps {
+    className?: string;
+    onClose?: () => void;
     jsonInput: string;
     setJsonInput: (val: string) => void;
     onSolve: (type: ProblemType, constraint: number, params: AlgorithmParams) => void;
@@ -30,6 +33,8 @@ const DEFAULT_PARAMS: AlgorithmParams = {
 };
 
 export const Sidebar: React.FC<SidebarProps> = ({
+    className,
+    onClose,
     jsonInput,
     setJsonInput,
     onSolve,
@@ -54,16 +59,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
             return;
         }
         onSolve(problemType, val, params);
+        if (onClose) onClose(); // Close sidebar on mobile after starting solve
     };
 
     return (
-        <div className="w-80 h-full border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex flex-col overflow-y-auto transition-colors duration-200">
+        <div className={cn("w-80 h-full border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex flex-col overflow-y-auto transition-colors duration-200", className)}>
             <div className="p-4 border-b border-slate-200 dark:border-slate-800">
                 <div className="flex justify-between items-start mb-1">
                     <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
                         {t('appTitle')}
                     </h1>
-                    <div className="flex space-x-1">
+                    <div className="flex items-center space-x-1">
                         <button
                             onClick={() => setLanguage('en')}
                             className={`text-xs px-1.5 py-0.5 rounded ${language === 'en' ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'}`}
@@ -81,6 +87,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             className="ml-2 text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400"
                         >
                             {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
+                        </button>
+                        {/* Mobile Close Button */}
+                        <button
+                            onClick={onClose}
+                            className="ml-2 md:hidden text-slate-500 hover:text-rose-500"
+                        >
+                            <X size={20} />
                         </button>
                     </div>
                 </div>

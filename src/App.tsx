@@ -6,7 +6,7 @@ import { AlgorithmMonitor } from './components/AlgorithmMonitor'
 import { parseInput, solveSA, hasCycle } from './lib/salbp'
 import { OptimizationStep, ProblemType, AlgorithmParams, Task } from './types'
 import { cn } from './lib/utils'
-import { LayoutDashboard, Network, LineChart as IconLineChart } from 'lucide-react'
+import { LayoutDashboard, Network, LineChart as IconLineChart, Menu } from 'lucide-react'
 import { useLanguage } from './context/LanguageContext'
 
 // Default Jackson's 11-task problem
@@ -142,10 +142,28 @@ function App() {
     const bestStep = history.length > 0 ? history.reduce((prev, curr) => (curr.cost < prev.cost ? curr : prev), history[0]) : null;
     const bestSolution = bestStep ? bestStep.solution : null;
 
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    // Close sidebar on route change/tab change if needed, or just mobile actions?
+    // Usually fine to just toggle.
+
     return (
         <div className="flex h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 font-sans overflow-hidden transition-colors duration-200">
+            {/* Mobile Backdrop */}
+            {isSidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm"
+                    onClick={() => setIsSidebarOpen(false)}
+                />
+            )}
+
             {/* Sidebar */}
             <Sidebar
+                className={cn(
+                    "fixed inset-y-0 left-0 z-50 shadow-2xl md:shadow-none transition-transform duration-300 md:static md:transform-none",
+                    isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+                )}
+                onClose={() => setIsSidebarOpen(false)}
                 jsonInput={jsonInput}
                 setJsonInput={setJsonInput}
                 onSolve={handleSolve}
@@ -162,11 +180,22 @@ function App() {
             <div className="flex-1 flex flex-col min-w-0">
 
                 {/* Top Bar / Tabs */}
-                <div className="h-14 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center px-4 justify-between transition-colors duration-200">
-                    <div className="flex space-x-1 bg-slate-100 dark:bg-slate-900 p-1 rounded-lg border border-slate-200 dark:border-slate-800">
-                        <TabButton isActive={activeTab === 'graph'} onClick={() => setActiveTab('graph')} icon={<Network size={16} />} label={t('graphTab')} />
-                        <TabButton isActive={activeTab === 'solution'} onClick={() => setActiveTab('solution')} icon={<LayoutDashboard size={16} />} label={t('solutionTab')} />
-                        <TabButton isActive={activeTab === 'monitor'} onClick={() => setActiveTab('monitor')} icon={<IconLineChart size={16} />} label={t('monitorTab')} />
+                <div className="h-14 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex items-center px-4 justify-between transition-colors duration-200 gap-4">
+
+                    {/* Mobile Menu Button */}
+                    <button
+                        onClick={() => setIsSidebarOpen(true)}
+                        className="md:hidden p-2 -ml-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                    >
+                        <Menu size={20} />
+                    </button>
+
+                    <div className="flex-1 flex space-x-1 overflow-x-auto no-scrollbar mask-gradient-right">
+                        <div className="flex space-x-1 bg-slate-100 dark:bg-slate-900 p-1 rounded-lg border border-slate-200 dark:border-slate-800 shrink-0">
+                            <TabButton isActive={activeTab === 'graph'} onClick={() => setActiveTab('graph')} icon={<Network size={16} />} label={t('graphTab')} />
+                            <TabButton isActive={activeTab === 'solution'} onClick={() => setActiveTab('solution')} icon={<LayoutDashboard size={16} />} label={t('solutionTab')} />
+                            <TabButton isActive={activeTab === 'monitor'} onClick={() => setActiveTab('monitor')} icon={<IconLineChart size={16} />} label={t('monitorTab')} />
+                        </div>
                     </div>
 
                     <div className="flex items-center space-x-6">
